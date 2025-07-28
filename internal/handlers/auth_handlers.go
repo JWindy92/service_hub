@@ -57,9 +57,10 @@ func (a *AuthPassthroughHandler) Login(c *gin.Context) {
 			Message: "login successful",
 			Token:   "1234-567-891011",
 			User: models.UserResponse{
-				ID:    user.ID,
-				Name:  user.Name,
-				Email: user.Email,
+				ID:      user.ID,
+				Name:    user.Name,
+				Email:   user.Email,
+				Profile: *user.Profile,
 			},
 		}
 		c.JSON(http.StatusOK, resp)
@@ -75,7 +76,7 @@ func (a *AuthPassthroughHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	utils.PrettyPrint(req)
+	// utils.PrettyPrint(req)
 	hash, err := a.Hasher.Hash(req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected error performing password hash"})
@@ -85,6 +86,9 @@ func (a *AuthPassthroughHandler) SignUp(c *gin.Context) {
 		Name:         req.Name,
 		Email:        req.Email,
 		PasswordHash: hash, // replace with actual hash function
+		Profile: &models.UserProfile{
+			IsComplete: false,
+		},
 	}
 
 	if err := a.UserService.CreateUser(&user); err != nil {
@@ -92,7 +96,7 @@ func (a *AuthPassthroughHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	utils.PrettyPrint(user)
+	// utils.PrettyPrint(user)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user created",

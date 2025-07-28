@@ -19,6 +19,7 @@ func NewUserService(conn *gorm.DB) *UserService {
 
 func (s *UserService) CreateUser(user *models.User) error {
 	utils.PrettyPrint(user)
+	// return s.DB.Select("Profile").Create(user).Error
 	return s.DB.Create(user).Error
 }
 
@@ -33,10 +34,14 @@ func (s *UserService) GetUserByID(id string) (*models.User, error) {
 func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	slog.Info("Attempting to find user", slog.String("email", email))
 	var user models.User
-	if err := s.DB.Preload("Reviews").Where("email = ?", email).First(&user).Error; err != nil {
+	if err := s.DB.Preload("Profile").Where("email = ?", email).First(&user).Error; err != nil {
 		log.Println("No user found")
 		return nil, err
 	}
+	// if err := s.DB.Preload("Reviews").Where("email = ?", email).First(&user).Error; err != nil {
+	// 	log.Println("No user found")
+	// 	return nil, err
+	// }
 	slog.Info("User found")
 	return &user, nil
 }

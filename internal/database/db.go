@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/JWindy92/service_hub/service_hub/internal/logging"
 	"github.com/JWindy92/service_hub/service_hub/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -48,12 +49,14 @@ func (impl *PostgresImpl) ConnectDB() *gorm.DB {
 	)
 
 	log.Printf("Connecting to Postgres DB: %s\n", dsn)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logging.GormLog,
+	})
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to Postgres: %v", err))
 	}
 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.UserProfile{})
 
 	if err != nil {
 		panic(fmt.Sprintf("failed to migrate schema: %v", err))
