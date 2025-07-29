@@ -11,7 +11,8 @@ type AuthInterface interface {
 
 type UserInterface interface {
 	GetUserByID(c *gin.Context)
-	GetUserByEmail(c *gin.Context)
+	UpdateUserProfile(c *gin.Context)
+	// GetUserByEmail(c *gin.Context)
 	// CreateUser(c *gin.Context)
 }
 
@@ -28,14 +29,15 @@ type LocationInterface interface {
 func RegisterRoutes(
 	r *gin.Engine,
 	auth AuthInterface,
-	// users UserInterface,
+	users UserInterface,
 	// reviews ReviewInterface,
 	// locs LocationInterface,
 ) {
 	r.POST("/signup", auth.SignUp)
 	r.POST("/login", auth.Login)
 
-	// r.GET("/users/:id", users.GetUserByID)
+	r.GET("/users/:id", users.GetUserByID)
+	r.POST("/users/:id/profile", users.UpdateUserProfile) //? Separate profile handler/service??
 	// r.GET("/users", users.GetUserByEmail) //TODO: should make less ambiguous. Maybe implement a broader search function
 	// r.POST("/users", users.CreateUser) //TODO: not sure if this is unnecessary yet, but /login performs the creation of users
 }

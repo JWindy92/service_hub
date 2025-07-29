@@ -25,7 +25,7 @@ func (s *UserService) CreateUser(user *models.User) error {
 
 func (s *UserService) GetUserByID(id string) (*models.User, error) {
 	var user models.User
-	if err := s.DB.First(&user, id).Error; err != nil {
+	if err := s.DB.Preload("Profile").First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -44,4 +44,9 @@ func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	// }
 	slog.Info("User found")
 	return &user, nil
+}
+
+func (s *UserService) UpdateUserProfile(userId int, prof *models.UpdateProfileRequest) error {
+	slog.Info("Updating user profile", slog.Int("userId", userId))
+	return s.DB.Model(&models.UserProfile{}).Where("user_id = ?", userId).Updates(&prof).Error
 }

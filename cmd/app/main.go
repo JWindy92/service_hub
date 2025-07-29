@@ -42,7 +42,7 @@ func main() {
 	routes.RegisterRoutes(
 		router,
 		handlers.NewAuthPassthroughHandler(&db, &services.DefaultPasswordHasher{}),
-		// handlers.NewDefaultUserHandler(&db),
+		handlers.NewDefaultUserHandler(&db),
 		// handlers.NewDefaultReviewHandler(&db),
 		// handlers.NewDefaultLocationHandler(&db),
 	)

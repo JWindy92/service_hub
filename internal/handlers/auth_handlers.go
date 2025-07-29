@@ -56,11 +56,8 @@ func (a *AuthPassthroughHandler) Login(c *gin.Context) {
 		resp := models.LoginSuccess{
 			Message: "login successful",
 			Token:   "1234-567-891011",
-			User: models.UserResponse{
-				ID:      user.ID,
-				Name:    user.Name,
-				Email:   user.Email,
-				Profile: *user.Profile,
+			User: models.UserLoginResponse{
+				ID: user.ID,
 			},
 		}
 		c.JSON(http.StatusOK, resp)
