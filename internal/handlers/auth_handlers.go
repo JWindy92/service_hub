@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -88,9 +89,15 @@ func (a *AuthPassthroughHandler) SignUp(c *gin.Context) {
 		},
 	}
 
-	if err := a.UserService.CreateUser(&user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
-		return
+	err = a.UserService.CreateUser(&user)
+	if err != nil {
+		if errors.Is(err, common.ErrUserExists) {
+			c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
+			return
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
+			return
+		}
 	}
 
 	// utils.PrettyPrint(user)

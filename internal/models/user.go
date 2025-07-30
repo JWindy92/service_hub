@@ -23,6 +23,9 @@ type UserProfile struct {
 	gorm.Model
 	// ID         uint   `gorm:"primaryKey" json:"id"`
 	IsComplete bool   `gorm:"default:false"` // Default to false
+	FName      string `json:"first_name"`
+	LName      string `json:"last_name"`
+	Phone      string `json:"phone"`
 	Address    string `json:"Address"`
 	UserID     uint   // Foreign key to User
 }

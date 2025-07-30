@@ -1,9 +1,11 @@
 package services
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 
+	"github.com/JWindy92/service_hub/service_hub/internal/common"
 	"github.com/JWindy92/service_hub/service_hub/internal/models"
 	"github.com/JWindy92/service_hub/service_hub/internal/utils"
 	"gorm.io/gorm"
@@ -19,8 +21,16 @@ func NewUserService(conn *gorm.DB) *UserService {
 
 func (s *UserService) CreateUser(user *models.User) error {
 	utils.PrettyPrint(user)
-	// return s.DB.Select("Profile").Create(user).Error
-	return s.DB.Create(user).Error
+	err := s.DB.Where("email = ?", user.Email).First(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// user does NOT exist
+		return s.DB.Create(user).Error
+	} else if err != nil {
+		// unexpected error
+		return err
+	} else {
+		return common.ErrUserExists
+	}
 }
 
 func (s *UserService) GetUserByID(id string) (*models.User, error) {
